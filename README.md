@@ -1,14 +1,15 @@
 # SSHKeySight
 ## Your Insightful Gateway to Secure Server Management
 
-In today's dynamic digital landscape, server security stands paramount. As the backbone of countless operations, Virtual Machines (VMs) require robust management tools that prioritize security without sacrificing convenience. Enter SSHKeySight, the dashboard designed for the future-forward sysadmin.
+SSHKeySight is a tool that provides sysadmins with a clear view of SSH key access across multiple Virtual Machines (VMs). In a world where server security is critical, understanding who has access to your infrastructure is essential. With SSHKeySight, you can effortlessly see which keys grant access to which servers, streamlining the management process and bolstering security.
 
-SSHKeySight offers a streamlined overview of SSH key access across an array of VMs. This isn't just a dashboard—it's a window into the very heart of your server's security dynamics. With SSHKeySight, transparency is brought to the forefront. At a glance, admins can discern who holds access to which servers, and with what credentials.
+## Key Features:
+<b>Transparent Overview</b>: Instantly see who has access to which VMs.
 
-But why does this matter? In the intricate world of server management, knowing is half the battle. Unwanted access can spell disaster, and tracing permissions can often be a convoluted task. SSHKeySight distills this complexity into a user-friendly interface, ensuring that server access remains both secure and comprehensible.
+<b>User-friendly Interface</b>: No more sifting through convoluted logs or configurations.
 
-Whether you're an IT veteran or just diving into the world of sysadmin responsibilities, SSHKeySight is your trusted companion. With security, clarity, and efficiency interwoven into its design, managing and monitoring your VMs has never felt this intuitive.
+<b>Enhanced Security</b>: Ensure only authorized personnel have access.
 
-Experience the future of server management with SSHKeySight. Your keys, your control.
+Dive in and experience a new standard in server management with SSHKeySight.
 
 ## TODO
