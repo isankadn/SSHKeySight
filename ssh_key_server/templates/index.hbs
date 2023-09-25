@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH Keys Dashboard</title>
+</head>
+
+<body>
+    <h1>SSH Keys Dashboard</h1>
+    {{#each this}}
+    <p>{{@key}} - {{this.0}}</p>
+    {{/each}}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>VM Name</th>
+                <th>IP Address</th>
+                <th>SSH Keys</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each this}}
+            <tr>
+                <td>{{@key}}</td>
+                <td>{{#if this.0}}
+                    {{this.0}}
+                    {{else}}
+                    Unknown
+                    {{/if}}</td>
+                <td>
+                    <ul>
+                        {{#each this.1}}
+                        <li>
+                            {{key}}
+                            <br>
+                            {{#if owner_info}}
+                            <strong>Owner Info:</strong> {{owner_info}}
+                            {{/if}}
+                        </li>
+                        {{/each}}
+                    </ul>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+
+</html>
