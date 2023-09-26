@@ -126,7 +126,7 @@
         <div id='recipients' class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
 
 
-            <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+            <table id="keytable" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                 <thead>
                     <tr>
                         <th data-priority="1">VM Name</th>
@@ -137,12 +137,13 @@
                 <tbody>
                     {{#each this}}
                     <tr>
-                        <td>{{@key}}</td>
-                        <td>{{#if this.0}} {{this.0}} {{else}} Unknown {{/if}}</td>
+                        <td>{{#if this.this.vm_name }} {{this.vm_name}}</br>{{this.vm_uuid}} {{else}} Unknown {{/if}}
+                        </td>
+                        <td>{{this.ip_address}}</td>
                         <td>
 
                             <ul style="overflow-wrap: anywhere;">
-                                {{#each this.1}}
+                                {{#each this.keys}}
                                 <li>
                                     {{#if owner_info}}
                                     <strong>Owner: </strong> {{owner_info}}
@@ -186,14 +187,14 @@
     <script>
         $(document).ready(function () {
 
-            var table = $('#example').DataTable({
+            var table = $('#keytable').DataTable({
                 responsive: true
             })
                 .columns.adjust()
                 .responsive.recalc();
-            $('#customSearchBox').on('keyup', function() {
-        table.search(this.value).draw();
-    });
+            $('#customSearchBox').on('keyup', function () {
+                table.search(this.value).draw();
+            });
             $('.show-key-btn').click(function () {
                 var keyContent = $(this).next('.key-content');
                 keyContent.toggle();

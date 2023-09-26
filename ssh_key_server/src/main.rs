@@ -32,8 +32,17 @@ struct Credentials {
 #[derive(Serialize, Deserialize, Clone)]
 struct SSHKeyReport {
     vm_name: String,
+    vm_uuid: String,
     ip_address: Option<String>,
     keys: Vec<String>,
+}
+
+#[derive(Serialize, Debug)]
+struct VMData {
+    vm_uuid: String,
+    vm_name: String,
+    ip_address: Option<String>,
+    keys: Vec<DisplayKey>,
 }
 
 struct MaybeAuthenticatedUser(Option<AuthenticatedUser>);
@@ -137,7 +146,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for MaybeAuthenticatedUser {
 #[post("/", data = "<report>")]
 fn receive_keys(report: Json<SSHKeyReport>, storage: State<'_, KeyStorage>) -> &'static str {
     let mut db = storage.lock().expect("Failed to lock storage.");
-    db.insert(report.vm_name.clone(), report.clone());
+    db.insert(report.vm_uuid.clone(), report.clone()); // Use vm_uuid as the key
     "Received"
 }
 
@@ -177,7 +186,7 @@ fn list_keys(user: MaybeAuthenticatedUser, storage: State<'_, KeyStorage>) -> Re
 
     let db = storage.lock().expect("Failed to lock storage.");
 
-    let processed_data: HashMap<String, (Option<String>, Vec<DisplayKey>)> = 
+    let processed_data: Vec<VMData> = 
         db.iter().map(|(_, report)| {
             let processed_keys: Vec<DisplayKey> = report.keys.iter().map(|key| {
                 let parts: Vec<&str> = key.split_whitespace().collect();
@@ -186,7 +195,12 @@ fn list_keys(user: MaybeAuthenticatedUser, storage: State<'_, KeyStorage>) -> Re
                     owner_info: parts.get(2).cloned().map(String::from),
                 }
             }).collect();
-            (report.vm_name.clone(), (report.ip_address.clone(), processed_keys))
+            VMData {
+                vm_uuid: report.vm_uuid.clone(),
+                vm_name: report.vm_name.clone(),
+                ip_address: report.ip_address.clone(),
+                keys: processed_keys,
+            }
         }).collect();
 
     Ok(Template::render("index", &processed_data))

@@ -9,6 +9,7 @@ use pnet::datalink;
 #[derive(Serialize, Deserialize)]
 struct SSHKeyReport {
     vm_name: String,
+    vm_uuid: String,
     ip_address: Option<String>,
     keys: Vec<String>,
 }
@@ -33,6 +34,10 @@ fn read_ssh_keys(path: &Path) -> Option<Vec<String>> {
     } else {
         None
     }
+}
+
+fn get_vm_uuid() -> Result<String, std::io::Error> {
+    fs::read_to_string("/sys/class/dmi/id/product_uuid")
 }
 
 async fn send_to_server(report: SSHKeyReport, server_url: &str) -> Result<(), reqwest::Error> {
@@ -64,7 +69,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     
     let ip_address = get_primary_ip();
-
+    let vm_uuid_result = get_vm_uuid();
+    let vm_uuid = match vm_uuid_result {
+        Ok(uuid) => uuid,
+        Err(e) => {
+            eprintln!("Error getting VM UUID: {}", e);
+            "unknown".to_string() // or handle this error in another way
+        }
+    };
     // Fetch server_url from environment variable
     let server_url = env::var("SERVER_URL").unwrap_or_else(|_| "http://10.236.173.129.nip.io:8000/".to_string());
 
@@ -74,6 +86,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let report = SSHKeyReport {
                 vm_name: vm_name.clone(),
                 ip_address: ip_address.clone(),
+                vm_uuid: vm_uuid.clone(),
                 keys,
             };
             send_to_server(report, &server_url).await?;
