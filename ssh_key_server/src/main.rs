@@ -155,9 +155,18 @@ fn receive_keys(report: Json<SSHKeyReport>, storage: State<'_, KeyStorage>) -> &
     for key in report.keys.iter() {
         // Create a composite key using vm_uuid and the individual key
         let composite_key = format!("{}-{}", report.vm_uuid, key);
+
+        // Create a new SSHKeyReport with the single key for insertion into the storage
+        let single_key_report = SSHKeyReport {
+            vm_name: report.vm_name.clone(),
+            vm_uuid: report.vm_uuid.clone(),
+            ip_address: report.ip_address.clone(),
+            keys: vec![key.clone()], // Inserting only the individual key
+        };
+
         
-        // Insert the data into the storage using the composite key
-        db.insert(composite_key, report.clone()); 
+        // Insert the single_key_report into the storage using the composite key
+        db.insert(composite_key, single_key_report); 
     }
 
     "Received"
