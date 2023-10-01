@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate lazy_static;
+
 use std::env;
 use std::fs;
 use std::path::Path;
@@ -5,6 +8,14 @@ use serde::{Serialize, Deserialize};
 use reqwest;
 use hostname;
 use pnet::datalink;
+use std::io::{self, ErrorKind};
+
+lazy_static! {
+    static ref DEBUG: bool = {
+        let debug_var = env::var("SSH_KEY_CLIENT_DEBUG").unwrap_or_default();
+        debug_var == "1" || debug_var == "1.000000000e+00"
+    };
+}
 
 #[derive(Serialize, Deserialize)]
 struct SSHKeyReport {
@@ -30,15 +41,32 @@ fn get_primary_ip() -> Option<String> {
 
 fn read_ssh_keys(path: &Path) -> Option<Vec<String>> {
     if let Ok(content) = fs::read_to_string(path) {
+        if *DEBUG {
+            println!("Reading content: {}", content);
+        }
         Some(content.lines().map(|s| s.to_string()).collect())
     } else {
         None
     }
+    
 }
 
-fn get_vm_uuid() -> Result<String, std::io::Error> {
-    fs::read_to_string("/sys/class/dmi/id/product_uuid")
+fn get_vm_uuid() -> Result<String, io::Error> {
+    println!("debug enabled: {}", DEBUG.to_string());
+    
+    if *DEBUG {
+        println!("Reading VM UUID from /sys/class/dmi/id/product_uuid");
+    }
+    match fs::read_to_string("/sys/class/dmi/id/product_uuid") {
+        Ok(uuid) => Ok(uuid),
+        Err(e) if e.kind() == ErrorKind::PermissionDenied => {
+            eprintln!("Permission denied. Please run the program with sudo.");
+            std::process::exit(1);
+        }
+        Err(e) => Err(e),
+    }
 }
+
 
 async fn send_to_server(report: SSHKeyReport, server_url: &str) -> Result<(), reqwest::Error> {
     let client = reqwest::Client::new();
@@ -49,6 +77,9 @@ async fn send_to_server(report: SSHKeyReport, server_url: &str) -> Result<(), re
 // This function reads the /etc/passwd file and returns a list of home directories
 fn get_user_home_dirs() -> Vec<String> {
     let content = fs::read_to_string("/etc/passwd").unwrap_or_default();
+    if *DEBUG {
+        println!("Reading content: {:?}", content);
+    }
     content.lines()
         .filter_map(|line| {
             let parts: Vec<&str> = line.split(':').collect();
@@ -59,6 +90,7 @@ fn get_user_home_dirs() -> Vec<String> {
             }
         })
         .collect()
+        
 }
 
 #[tokio::main]
@@ -82,6 +114,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for home_dir in get_user_home_dirs() {
         let key_path = Path::new(&home_dir).join(".ssh/authorized_keys");
+        if *DEBUG {
+            println!("Reading SSH keys from: {:?}", key_path);
+        }     
         if let Some(keys) = read_ssh_keys(&key_path) {
             let report = SSHKeyReport {
                 vm_name: vm_name.clone(),

@@ -14,6 +14,7 @@ use serde_yaml;
 use base64;
 use rocket::http::{Cookie, Cookies};
 use rocket::response::Redirect;
+use rocket_contrib::serve::StaticFiles;
 
 
 struct AuthenticatedUser(String);
@@ -145,8 +146,20 @@ impl<'a, 'r> FromRequest<'a, 'r> for MaybeAuthenticatedUser {
 
 #[post("/", data = "<report>")]
 fn receive_keys(report: Json<SSHKeyReport>, storage: State<'_, KeyStorage>) -> &'static str {
-    let mut db = storage.lock().expect("Failed to lock storage.");
-    db.insert(report.vm_uuid.clone(), report.clone()); // Use vm_uuid as the key
+    let mut db = match storage.lock() {
+        Ok(guard) => guard,
+        Err(_) => return "Failed to lock storage.",
+    };
+    
+    // Iterate over each key in the report's keys vector
+    for key in report.keys.iter() {
+        // Create a composite key using vm_uuid and the individual key
+        let composite_key = format!("{}-{}", report.vm_uuid, key);
+        
+        // Insert the data into the storage using the composite key
+        db.insert(composite_key, report.clone()); 
+    }
+
     "Received"
 }
 
@@ -217,7 +230,8 @@ fn rocket() -> rocket::Rocket {
     rocket::ignite()
         .attach(Template::fairing()) // Attach the template fairing
         .manage(Mutex::new(HashMap::<String, SSHKeyReport>::new()))
-        .mount("/", routes![receive_keys, list_keys, login_page, login_submit])
+        .mount("/static", StaticFiles::from("static"))
+        .mount("/", routes![receive_keys, list_keys, login_page, login_submit])        
         .register(catchers![not_found])
 }
 

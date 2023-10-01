@@ -1065,6 +1065,7 @@ name = "ssh_key_client"
 version = "0.1.0"
 dependencies = [
  "hostname",
+ "lazy_static",
  "openssl-sys",
  "pnet",
  "reqwest",

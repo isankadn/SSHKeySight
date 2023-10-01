@@ -13,6 +13,7 @@ tokio = {version = "1.32.0", features = ["full"]}
 hostname = "0.3"
 pnet = "0.27"
 openssl-sys = "*"
+lazy_static = "1.4"
 
 [features]
 # Force openssl-sys to staticly link in the openssl library. Necessary when
