@@ -11,6 +11,12 @@
     <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel=" stylesheet">
     <!--Replace with your tailwind.css once created-->
 
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
 
     <!--Regular Datatables CSS-->
     <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -125,7 +131,6 @@
         <!--Card-->
         <div id='recipients' class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
 
-
             <table id="keytable" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                 <thead>
                     <tr>
@@ -187,12 +192,14 @@
     <script>
         $(document).ready(function () {
 
-            var table = $('#keytable').DataTable({
+            var table = $('#keytable').DataTable({                
                 responsive: true
             })
                 .columns.adjust()
                 .responsive.recalc();
-            $('#customSearchBox').on('keyup', function () {
+            $('.dataTables_filter input').attr('id', 'searchBox')
+            $('#searchBox').on('keyup', function () {
+                console.log(this.value);
                 table.search(this.value).draw();
             });
             $('.show-key-btn').click(function () {
