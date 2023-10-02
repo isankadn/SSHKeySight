@@ -42,7 +42,8 @@ chmod +x deploy_ssh_key_client.sh
 In the terminal, navigate to the directory containing your script and CSV file.
 Run the script using the command:
 ```
-./deploy_ssh_key_client.sh 
+./deploy_ssh_key_client.sh <VERSION> 
+# Version example v1.0.2
 ```
 
 The script will execute, and you should see debug messages as it processes each server in servers.csv.
