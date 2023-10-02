@@ -1,3 +1,4 @@
+[![SSHKeySight](https://github.com/isankadn/SSHKeySight/actions/workflows/sshkeysight.yml/badge.svg)](https://github.com/isankadn/SSHKeySight/actions/workflows/sshkeysight.yml)
 # SSHKeySight
 ## Your Insightful Gateway to Secure Server Management
 
