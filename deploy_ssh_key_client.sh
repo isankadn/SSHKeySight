@@ -50,6 +50,8 @@ for line in $(cat servers.csv); do
     # Set the necessary permissions
     ssh -o "StrictHostKeyChecking=no" "$server" "chmod +x $TARGET_DIR/ssh_key_client"
 
+    ssh -o "StrictHostKeyChecking=no" "$server" " sudo $TARGET_DIR/ssh_key_client"
+
     echo "DEBUG: Setting up crontab for $ip"
     # Setup the crontab on the target server
     ssh -o "StrictHostKeyChecking=no" "$server" "
@@ -63,6 +65,7 @@ rm ./ssh_key_client
 
 echo "Deployment complete!"
 # Remove the locally downloaded file
+
 
 
 
