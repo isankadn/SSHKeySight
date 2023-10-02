@@ -106,7 +106,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for MaybeAuthenticatedUser {
                 return Outcome::Forward(());
             }
         };
-        println!("Credentials: {:?}", credentials);
+        // println!("Credentials: {:?}", credentials);
         // Check for "username" cookie first
         let mut cookies = request.cookies();
         if cookies.get_private("username").is_some() {

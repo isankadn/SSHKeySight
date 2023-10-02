@@ -192,16 +192,11 @@
     <script>
         $(document).ready(function () {
 
-            var table = $('#keytable').DataTable({                
+            var table = $('#keytable').DataTable({
                 responsive: true
-            })
-                .columns.adjust()
+            }).columns.adjust()
                 .responsive.recalc();
-            $('.dataTables_filter input').attr('id', 'searchBox')
-            $('#searchBox').on('keyup', function () {
-                console.log(this.value);
-                table.search(this.value).draw();
-            });
+            $('.dataTables_filter input').attr('id', 'searchBox');
             $('.show-key-btn').click(function () {
                 var keyContent = $(this).next('.key-content');
                 keyContent.toggle();
@@ -210,6 +205,10 @@
                 } else {
                     $(this).text('Show Key');
                 }
+            });
+            $('#searchBox').on('keyup', function () {
+                console.log(this.value);
+                table.search(this.value).draw();
             });
         });
     </script>
