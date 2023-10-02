@@ -12,7 +12,7 @@ env:
 jobs:
   build_ssh_key_client:
 
-    runs-on: almalinux-latest
+    runs-on: self-hosted, almalinux
 
     steps:
     - uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         target: x86_64-unknown-linux-musl
-        toolchain: stable 
+        toolchain: nightly 
         profile: minimal
         override: true
     - name: Build ssh_key_client
@@ -30,7 +30,7 @@ jobs:
 
   build_ssh_key_server:
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted, almalinux
 
     steps:
     - uses: actions/checkout@v3
@@ -38,7 +38,7 @@ jobs:
       uses: actions-rs/toolchain@v1
       with:
         target: x86_64-unknown-linux-musl
-        toolchain: stable 
+        toolchain: nightly 
         profile: minimal
         override: true
     - name: Build ssh_key_server
